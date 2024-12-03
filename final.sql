@@ -45,9 +45,9 @@ Create table if not exists final_persona(person_id SERIAL,
     );
 
 CREATE TABLE IF NOT EXISTS final_colision_persona (collision_person_id SERIAL,
-    accident_id INT,
-    person_id INT,
-    vehicle_id INT,
+    accident_id varchar(10),
+    person_id varchar(512),
+    vehicle_id varchar(512),
     person_type VARCHAR(20),
     person_sex CHAR(1),
     person_injury VARCHAR(50),
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS final_colision_persona (collision_person_id SERIAL,
     );
 
 CREATE TABLE IF NOT EXISTS final_colision_vehiculos (collision_vehicle_id SERIAL,
-    accident_id INT,
-    vehicle_id INT,
+    accident_id varchar(10),
+    vehicle_id varchar(512),
     travel_direction VARCHAR(50),
     vehicle_occupants SMALLINT,
     driver_sex CHAR(1),
@@ -138,7 +138,7 @@ INSERT INTO final_vehiculos (vehicle_id,
                              vehicle_year
 )
 SELECT
-    CAST(vehicle_id AS Serial),
+    CAST(vehicle_id AS VARCHAR(512)),
     CAST(NULL AS CHAR(2)), -- Como no hay state_registration, se deja como NULL explícito
     CAST(vehicle_type AS VARCHAR(20)),
     CAST(vehicle_make AS VARCHAR(20)),
@@ -192,9 +192,9 @@ INSERT INTO final_colision_persona(
     CONTRIBUTING_FACTOR_2
 )
 SELECT
-    CAST(accident_id AS INT),
-    CAST(person_id AS INT),
-    CAST(vehicle_id AS INT),
+    CAST(accident_id AS varchar(10)),
+    CAST(person_id AS varchar(512)),
+    CAST(vehicle_id AS varchar(512)),
     CAST(person_type AS VARCHAR(20)),
     CAST(person_sex AS CHAR(1)),
     CAST(person_injury AS VARCHAR(50)),
@@ -228,8 +228,8 @@ INSERT INTO final_colision_vehiculos (
     CONTRIBUTING_FACTOR_2
 )
 SELECT
-    CAST(accident_id AS INT),
-    CAST(vehicle_id AS INT),
+    CAST(accident_id AS varchar(10)),
+    CAST(vehicle_id AS varchar(512)),
     CAST(travel_direction AS VARCHAR(50)),
     CAST(vehicle_occupants AS SMALLINT),
     CAST(driver_sex AS CHAR(1)),

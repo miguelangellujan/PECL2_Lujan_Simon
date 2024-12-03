@@ -61,8 +61,8 @@ CREATE TABLE IF NOT EXISTS persona(
 );
 
 CREATE TABLE IF NOT EXISTS colision_persona(
-    collision_vehicle_id TEXT,
-    accident_id TEXT,
+    unique_id TEXT,
+    collision_id TEXT,
     crash_date TEXT,
     crash_time TEXT,
     person_id TEXT,
@@ -85,8 +85,8 @@ CREATE TABLE IF NOT EXISTS colision_persona(
 );
 
 CREATE TABLE IF NOT EXISTS colision_vehiculos (
-    collision_vehicle_id TEXT,
-    accident_id TEXT,
+    unique_id TEXT,
+    collision_id TEXT,
     crash_date TEXT,
     crash_time TEXT,
     vehicle_id TEXT,
