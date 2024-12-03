@@ -1,10 +1,11 @@
-create table if not exists final_accidentes(accident_id SERIAL,
-    CRASH_DATE date not null,
-    CRASH_TIME  time not null ,
+create table if not exists final_accidentes(
+    crash_date date,
+    crash_time  time not null ,
     borough Varchar(30),
     zip_code CHAR(5),
     latitude NUMERIC(9,6),
     longitude NUMERIC(9,6),
+    location  VARCHAR(50),
     on_street_name	VARCHAR(100),
     cross_street_name	VARCHAR(100),
     off_street_name	VARCHAR(100),
@@ -20,18 +21,21 @@ create table if not exists final_accidentes(accident_id SERIAL,
     CONTRIBUTING_FACTOR_VEHICLE_2 VARCHAR(255),
     CONTRIBUTING_FACTOR_VEHICLE_3 VARCHAR(255),
     CONTRIBUTING_FACTOR_VEHICLE_4 VARCHAR(255),
-    CONTRIBUTING_FACTOR_VEHICLE_5 VARCHAR(255)
+    CONTRIBUTING_FACTOR_VEHICLE_5 VARCHAR(255),
+    collision_id varchar(512)
     );
 
-create table if not exists final_vehiculos(vehicle_id	SERIAL,
+create table if not exists final_vehiculos(
+    vehicle_id	VARCHAR(512),
     state_registration CHAR(2),
     vehicle_type	VARCHAR(20),
     vehicle_make	VARCHAR(20),
     vehicle_model	VARCHAR(30),
-    vehicle_year	smallint
+    vehicle_year	CHAR(4)
     );
 
-Create table if not exists final_persona(person_id SERIAL,
+Create table if not exists final_persona(
+    person_id VARCHAR(512),
     person_sex	CHAR(1),
     person_lastname	VARCHAR(20),
     person_firstname VARCHAR(20),
@@ -44,7 +48,7 @@ Create table if not exists final_persona(person_id SERIAL,
     person_dob	DATE
     );
 
-CREATE TABLE IF NOT EXISTS final_colision_persona (collision_person_id SERIAL,
+CREATE TABLE IF NOT EXISTS final_colision_persona (
     accident_id varchar(10),
     person_id varchar(512),
     vehicle_id varchar(512),
@@ -52,7 +56,7 @@ CREATE TABLE IF NOT EXISTS final_colision_persona (collision_person_id SERIAL,
     person_sex CHAR(1),
     person_injury VARCHAR(50),
     person_age SMALLINT,
-    ejection BOOLEAN,
+    ejection Varchar(10),
     emotional_status VARCHAR(50),
     bodily_injury VARCHAR(50),
     position_in_vehicle VARCHAR(50),
@@ -65,11 +69,11 @@ CREATE TABLE IF NOT EXISTS final_colision_persona (collision_person_id SERIAL,
     CONTRIBUTING_FACTOR_2 VARCHAR(255)
     );
 
-CREATE TABLE IF NOT EXISTS final_colision_vehiculos (collision_vehicle_id SERIAL,
+CREATE TABLE IF NOT EXISTS final_colision_vehiculos (
     accident_id varchar(10),
     vehicle_id varchar(512),
     travel_direction VARCHAR(50),
-    vehicle_occupants SMALLINT,
+    vehicle_occupants Varchar(8),
     driver_sex CHAR(1),
     driver_license_status VARCHAR(20),
     driver_license_jurisdiction VARCHAR(50),
@@ -88,6 +92,7 @@ INSERT INTO final_accidentes (
     zip_code,
     latitude,
     longitude,
+    location,
     on_street_name,
     cross_street_name,
     off_street_name,
@@ -103,15 +108,17 @@ INSERT INTO final_accidentes (
     contributing_factor_vehicle_2,
     contributing_factor_vehicle_3,
     contributing_factor_vehicle_4,
-    contributing_factor_vehicle_5
+    contributing_factor_vehicle_5,
+    collision_id
 )
 SELECT
-    TO_DATE(temp.accidentes.crash_date, 'MM/DD/YY'),
+    TO_DATE(pecl2.temp.accidentes.crash_date, 'MM/DD/YYYY'),
     CAST(crash_time AS TIME),
     CAST(borough AS VARCHAR(30)),
     CAST(zip_code AS CHAR(5)),
-    CAST(latitude AS NUMERIC(9,6)),
-    CAST(longitude AS NUMERIC(9,6)),
+    CAST(latitude AS NUMERIC(9, 6)),
+    CAST(longitude AS NUMERIC(9, 6)),
+    CAST(location as VARCHAR(50)),
     CAST(on_street_name AS VARCHAR(100)),
     CAST(cross_street_name AS VARCHAR(100)),
     CAST(off_street_name AS VARCHAR(100)),
@@ -127,15 +134,17 @@ SELECT
     CAST(contributing_factor_vehicle_2 AS VARCHAR(255)),
     CAST(contributing_factor_vehicle_3 AS VARCHAR(255)),
     CAST(contributing_factor_vehicle_4 AS VARCHAR(255)),
-    CAST(contributing_factor_vehicle_5 AS VARCHAR(255))
-FROM temp.accidentes;
+    CAST(contributing_factor_vehicle_5 AS VARCHAR(255)),
+    CAST(accidente_id AS varchar(512))
+FROM pecl2.temp.accidentes;
 
-INSERT INTO final_vehiculos (vehicle_id,
-                             state_registration,
-                             vehicle_type,
-                             vehicle_make,
-                             vehicle_model,
-                             vehicle_year
+INSERT INTO final_vehiculos (
+    vehicle_id,
+    state_registration,
+    vehicle_type,
+    vehicle_make,
+    vehicle_model,
+    vehicle_year
 )
 SELECT
     CAST(vehicle_id AS VARCHAR(512)),
@@ -143,10 +152,11 @@ SELECT
     CAST(vehicle_type AS VARCHAR(20)),
     CAST(vehicle_make AS VARCHAR(20)),
     CAST(vehicle_model AS VARCHAR(30)),
-    CAST(vehicle_year AS SMALLINT)
-FROM temp.vehiculos;
+    CAST(vehicle_year AS CHAR(4))
+FROM pecl2.temp.vehiculos;
 
 INSERT INTO final_persona (
+    person_id,
     person_sex,
     person_lastname,
     person_firstname,
@@ -159,6 +169,7 @@ INSERT INTO final_persona (
     person_dob
 )
 SELECT
+    CAST(person_id AS VARCHAR(512)),
     CAST(person_sex AS CHAR(1)),
     CAST(person_lastname AS VARCHAR(20)),
     CAST(person_firstname AS VARCHAR(20)),
@@ -169,7 +180,7 @@ SELECT
     CAST(person_zip AS CHAR(5)),
     CAST(person_ssn AS CHAR(11)),
     CAST(person_dob AS DATE)
-FROM temp.persona;
+FROM pecl2.temp.persona;
 
 INSERT INTO final_colision_persona(
     accident_id,
@@ -199,7 +210,7 @@ SELECT
     CAST(person_sex AS CHAR(1)),
     CAST(person_injury AS VARCHAR(50)),
     CAST(person_age AS SMALLINT),
-    CAST(ejection AS BOOLEAN),
+    CAST(ejection AS VARCHAR(10)),
     CAST(emotional_status AS VARCHAR(50)),
     CAST(bodily_injury AS VARCHAR(50)),
     CAST(position_in_vehicle AS VARCHAR(50)),
@@ -210,7 +221,7 @@ SELECT
     CAST(ped_role AS VARCHAR(50)),
     CAST(CONTRIBUTING_FACTOR AS VARCHAR(255)),
     CAST(CONTRIBUTING_FACTOR_2 AS VARCHAR(255))
-FROM temp.colision_persona;
+FROM pecl2.temp.colision_persona;
 
 INSERT INTO final_colision_vehiculos (
     accident_id,
@@ -231,7 +242,7 @@ SELECT
     CAST(accident_id AS varchar(10)),
     CAST(vehicle_id AS varchar(512)),
     CAST(travel_direction AS VARCHAR(50)),
-    CAST(vehicle_occupants AS SMALLINT),
+    CAST(vehicle_occupants AS varchar(8)),
     CAST(driver_sex AS CHAR(1)),
     CAST(driver_license_status AS VARCHAR(20)),
     CAST(driver_license_jurisdiction AS VARCHAR(50)),
@@ -241,4 +252,4 @@ SELECT
     CAST(public_property_damage_type AS VARCHAR(100)),
     CAST(CONTRIBUTING_FACTOR AS VARCHAR(255)),
     CAST(CONTRIBUTING_FACTOR_2 AS VARCHAR(255))
-FROM temp.colision_vehiculos;
+FROM pecl2.temp.colision_vehiculos;
