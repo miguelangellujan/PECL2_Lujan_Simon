@@ -22,8 +22,7 @@ create table if not exists final_accidentes(
     CONTRIBUTING_FACTOR_VEHICLE_3 VARCHAR(255),
     CONTRIBUTING_FACTOR_VEHICLE_4 VARCHAR(255),
     CONTRIBUTING_FACTOR_VEHICLE_5 VARCHAR(255),
-    collision_id varchar(512)
-    );
+    collision_id varchar(512));
 
 create table if not exists final_vehiculos(
     vehicle_id	VARCHAR(512),
